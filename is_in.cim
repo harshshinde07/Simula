@@ -1,0 +1,34 @@
+begin
+         class A;
+         begin
+            integer I;
+         end--of--A;
+
+         A class A1;
+         begin
+            integer K;
+         end--of--A1;
+
+         A class A2;
+         begin
+            integer L;
+         end--of--A2;
+
+         ref(A) Obj1,Obj2,Obj3,Obj4;
+
+         Obj1 :- new A;
+         Obj2 :- new A1;
+         Obj3 :- new A2;
+
+         for Obj4 :- Obj1,Obj2,Obj3 do
+         begin
+            if Obj4 is A then OutText("Object is A") else
+            if Obj4 in A then
+            begin
+               OutText("Object in A");
+               if Obj4 is A1 then OutText(" and is A1")
+                             else OutText(" and is A2")
+            end else OutText("Object is not A and is not in A");
+            OutImage
+         end
+end**of**program

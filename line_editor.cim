@@ -1,0 +1,137 @@
+begin
+   
+      ref(InFile) Input;
+      ref(OutFile) Output;
+
+      text procedure InLine;
+      begin
+         InImage;
+         InLine :- Copy(SysIn.Image.Strip)
+      end++of++InLine;
+
+      procedure OutLine(T); text T;
+      begin
+         OutText(T);
+         OutImage
+      end++of++OutLine;
+      
+      class LineRec(Tex); text Tex;
+      begin
+         procedure AddTo(List); ref(Link_List) List;
+         begin
+            if List.Last=/=None then List.Last.Next :- this LineRec;
+            this LineRec.Prev :- List.Last;
+            List.Last :- this LineRec;
+            if List.First==None then List.First :- this LineRec
+         end--of--AddTo;
+         
+         procedure Add_Before(Record); ref(LineRec) Record;
+         begin
+            if Record.Prev=/=None then
+            begin
+               Record.Prev.Next :- this LineRec;
+               Prev :- Record.Prev
+            end..of..if;
+            Record.Prev :- this LineRec;
+            Next :- Record
+         end--of--Add_Before;
+         
+         ref(LineRec) Next, Prev;
+      end++of++LineRec;
+      
+      class Link_List;
+      begin
+         ref(LineRec) First, Last;
+      end++of++Link_List;
+      
+      ref(LineRec) Current;
+      ref(Link_List) Lines;
+      character Command;
+      integer Reps, Count;
+      
+      Input :- new InFile("Source");
+      Output :- new OutFile("Output");
+      Lines :- new Link_List;
+      
+      comment First read in the file;
+      inspect Input do
+      begin
+         Open(Blanks(80));
+         while not EndFile do new LineRec(InText(80)).AddTo(Lines);
+         Close
+      end++of++inspect++Input;
+     
+     
+      comment Now process commands from SysIn;
+      Current :- Lines.First;
+      while Command ne 'E' do
+      begin
+         if Command ne '!0!' then Reps := InInt;
+         InImage;
+         if Command='M' then
+         begin   ! Move forward or backwards;
+            if Reps>0 then
+            begin
+               for Count := 1 step 1 until Reps do
+               begin
+                  if Current.Next==None then OutLine("***End of file***")
+                     else Current :- Current.Next
+               end
+            end else
+            if Reps<0 then
+            begin
+               for Count := 1 step 1 until -Reps do
+               begin
+                  if Current.Prev==None then OutLine("***Start of file***")
+                  else Current :- Current.Prev
+               end
+            end
+         end else
+         if Command='I' then
+         begin   ! Insert new lines;
+            for Count := 1 step 1 until Reps do
+               new LineRec(InLine).Add_Before(Current)
+         end else
+         if Command='D' then
+         begin   ! Delete lines forwards or backwards;
+            if Reps>0 then
+            begin
+               Current :- Current.Prev;
+               for Count := 1 step 1 until Reps do
+               if Current.Next==None then OutLine("***End of file***") else
+               begin
+                  Current.Next :- Current.Next.Next;
+                  Current.Next.Prev :- Current
+               end
+            end else
+            if Reps<0 then
+            begin
+               Current :- Current.Next;
+               for Count := 1 step 1 until -Reps do
+               if Current.Prev==None then OutLine("***Start of file***") else
+               begin
+                  Current.Prev :- Current.Prev.Prev;
+                  Current.Prev.Next :- Current
+               end
+            end
+         end==of==D;
+         OutLine(Current.Tex);
+         Command := InChar
+      end++of++command++loop;
+ 
+      Comment Now write out file;
+      Current :- Lines.First;
+      inspect Output do
+      begin
+         Open(Blanks(80));
+         while Current=/=None do
+         begin
+            OutText(Current.Tex);
+            OutImage;
+            Current :- Current.Next
+         end;
+         Close
+      end++of++inspect++Output;
+ 
+      OutLine("Edit finished")
+   end**of**program

@@ -1,0 +1,16 @@
+begin
+                   InImage;
+                   inspect SysIn do
+                   begin
+                      while Image.Length>60 do
+                      begin
+                         OutText(Image.Sub(1,60));
+                         OutImage;
+                         Image :- Image.Sub(61,Image.Length-60);
+                         comment Note the use of reference assignment which
+                                 updates Image.Length, unlike value assignment;
+                      end;
+                      OutText(Image);
+                      OutImage
+                   end
+end

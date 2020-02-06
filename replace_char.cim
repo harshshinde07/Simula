@@ -1,0 +1,17 @@
+begin 
+	text T, res;
+	character temp;
+	InImage;
+	inspect SysIn do
+		begin
+			T :- Copy(Image.Strip);
+			res :- Blanks(T.length);
+			while T.More do
+				begin
+					temp := T.GetChar;
+					if  temp = '&' then res.PutChar('a')
+						else res.PutChar(temp);
+				end;
+		end;
+	OutText(res);
+end

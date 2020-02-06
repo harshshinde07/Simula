@@ -1,0 +1,73 @@
+SIMULATION
+   begin
+   
+      ref(Head) ReceptionistQ, InterviewQ1, InterviewQ2;
+      integer I, Manual;
+      
+      Process class Interviewer(Title, MyQueue); text Title;
+                                            ref(Head) MyQueue;
+      begin
+         ref(Link) Next;      
+         inspect MyQueue do
+            while True do ! Indefinite loop;
+            begin
+               if not Empty then
+               begin
+                  Hold(3.5); ! Interview time taken as 3.5 minutes;
+                  Next :- First;
+                  Next.Out;
+                  activate Next after Current;
+                  Hold(3.0);   ! 3 minutes to clear desk;
+               end else
+               begin
+                  Hold(5.0);   ! Wait 5 minutes before checking queue again;
+               end--of--one--sequence
+            end++of++loop
+            
+      end==of==Interviewer;
+      
+      Process class JobHunter(SkillCategory); integer SkillCategory;
+      begin
+         OutText("Job hunter "); OutInt(SkillCategory,4);
+         OutText(" joins receptionist queue at time "); OutFix(Time,4,8);
+         OutImage;
+         Wait(ReceptionistQ);
+         OutText("Job hunter "); OutInt(SkillCategory,4);
+         OutText(" joins interview queue"); OutImage;
+         Hold(1.0);   ! 1 minute to join new queue;
+         if SkillCategory=Manual then Wait(InterviewQ1)
+                                 else Wait(InterviewQ2);
+         OutText("Job hunter "); OutInt(SkillCategory,4);
+         OutText(" leaves employment office"); OutImage
+      end==of==JobHunter;
+
+      Process class Receptionist;
+      begin
+         ref(Link) Customer;
+         while True do
+         begin
+            if not ReceptionistQ.Empty then
+            begin
+               Hold(2.0);
+               Customer :- ReceptionistQ.First;
+               Customer.Out;
+               activate Customer;
+            end else Hold(1.0)
+         end
+      end==of==Receptionist;
+
+
+      Manual := 1;
+      ReceptionistQ :- new Head;
+      InterviewQ1 :- new Head;
+      InterviewQ2 :- new Head;
+      activate new Receptionist;
+      activate new Interviewer("Manual",InterviewQ1);
+      activate new Interviewer("Skilled",InterviewQ2);
+      for I := 1,2,2,1 do
+      begin
+         Activate new JobHunter(I);
+         Hold(2.0)
+      end;
+      Hold(100)
+   end**of**program

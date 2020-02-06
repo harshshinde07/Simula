@@ -1,0 +1,49 @@
+! Letter Program in SIMULA;
+
+begin
+         class Leter;
+         begin
+            text Sender;
+            text array Line(1:60);
+            integer Len;
+
+            procedure ReadLetter;
+            begin
+               InImage;
+               inspect SysIn do
+                  while Image.Strip ne ".end" do
+                  begin
+                     Len := Len + 1;
+                     Line(Len) :- Copy(Image.Strip);
+                     InImage
+                  end
+            end++of++ReadLetter;
+
+            procedure WriteLetter;
+            begin
+               integer Current;
+               for  Current := 1 step 1 until Len do
+               begin
+                  OutText(Line(Current));
+                  OutImage
+               end;
+               OutText("          Yours faithfully,");
+               OutImage;
+               OutText("             ");
+               OutText(Sender);
+               OutImage
+            end++of++WriteLetter;
+
+            OutText("Type your letter, ending with '.end' on a line by itself");
+            OutImage;
+            ReadLetter;
+            OutText("Now type your name on a single line");
+            OutImage;
+            InImage;
+            inspect SysIn do Sender :- Copy(Image.Strip)
+
+         end--of--class--Leter;
+
+         new Leter.WriteLetter
+
+      end**of**program

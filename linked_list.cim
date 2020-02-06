@@ -1,0 +1,66 @@
+begin
+      class Linked_Label;
+      begin
+         ref(Linked_Label) Next;
+         integer SeqNo;
+         SeqNo := InInt
+      end--of--Linked--Label;
+
+      class Label_List;
+      begin
+         ref(Linked_Label) Head, Tail;
+
+         procedure AddtoEnd(Lab);ref(Linked_Label) Lab;
+         begin
+            if Head==None then
+            begin
+               comment Special case when list is empty;
+               Head :- Tail :- Lab
+            end else begin
+               comment Normal case;
+               Tail.Next :- Lab;
+               Tail :- Lab
+            end
+         end++of++AddtoEnd;
+
+         procedure AddtoFront(Lab);ref(Linked_Label) Lab;
+         begin
+            if Head==None then
+            begin
+               comment Special case when list is empty;
+               Head :- Tail :- Lab
+            end else begin
+               comment Normal case;
+               Lab.Next :- Head;
+               Head :- Lab
+            end
+         end++of++AddtoFront;
+
+      end--of--Label--List;
+
+      ref(Label_List) Labs;
+      ref(Linked_Label) New_Lab, Temp;
+      integer Count;
+
+      comment Create an initial list of 4 items;
+      Labs :- new Label_List;
+      for Count := 1 step 1 until 4 do Labs.AddtoEnd(new Linked_Label);
+
+      comment Add a new label to the front;
+      Labs.AddtoFront(New Linked_Label);
+      comment Add a new label between existing nos. 2 and 3;
+      New_Lab :- new Linked_Label;
+      Temp :- Labs.Head;
+      Temp :- Temp.Next;
+      comment Temp now points to item 2 on list;
+      New_Lab.Next :- Temp.Next;   ! Step b) in diagram 10.2;
+      Temp.Next :- New_Lab;        ! Step c) in diagram 10.2;
+
+      Temp :- Labs.Head;
+      while Temp=/=None do
+      begin
+         OutInt(Temp.SeqNo,3);
+         Temp :- Temp.Next
+      end;
+      OutImage
+   end**of**program

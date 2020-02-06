@@ -1,0 +1,46 @@
+begin
+
+      class Number(Val); integer Val;
+      begin
+
+         procedure AddOn(Link); name Link; ref(Number) Link;
+            if Link==None then Link :- this Number else
+            if Val>Link.Val then AddOn(Link.Right) else AddOn(Link.Left);
+
+         ref(Number) Left, Right;
+
+      end..of..Number;
+
+      procedure LookFor(Val,Link); integer Val; ref(Number) Link;
+         if Link==None then
+         begin
+               OutText("Value not in tree ");
+               OutInt(Val,4);
+               OutImage
+         end else
+         if Val=Link.Val then
+         begin
+            OutText("Number found");
+            OutInt(Val,4);
+            OutImage
+      end else
+      if Val>Link.Val then
+      begin
+         OutText("Following right link");
+         OutImage;
+         LookFor(Val,Link.Right)
+      end else
+      begin
+         OutText("Following left link");
+         OutImage;
+         LookFor(Val,Link.Left)
+      end..of..Look..For;
+
+      ref(Number) Head;
+      integer Count;
+
+      for Count := 27, 16, 30, 29, 22, 31 do new Number(Count).AddOn(Head);
+
+      for Count := 27, 22, 33, 31 do LookFor(Count,Head)
+
+   end**of**program

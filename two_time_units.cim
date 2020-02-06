@@ -1,0 +1,65 @@
+SIMULATION
+   begin
+
+      procedure Report;
+      begin
+         OutText("   *** Report ***"); OutImage;
+         OutInt(Count,6); OutText(" documents printed, at time");
+         OutFix(Time,2,8); OutImage
+      end--of--Report;
+
+      Process class Writer;
+      begin
+         ref(Typer) Typist;
+         ref(Document) Doc;
+         while True do
+         begin
+            Hold(8.0);
+            Doc :- new Document;
+            Typist :- TypingPool.First;
+            Typist.Out;
+            activate Typist
+         end
+      end--of--Writer;
+
+      Process class Typer;
+      begin
+         Wait(TypingPool);
+         while True do
+         begin
+            Hold(4.0);
+            activate PhotoCopier;
+            Wait(TypingPool);
+         end
+      end--of--Typer;
+
+      Process class Copier;
+      begin
+         while True do
+         begin
+            Hold(1.0);
+            Count := Count + 1;
+            OutText("Document printed at ");
+            OutFix(Time,2,10);
+            OutImage;
+            Passivate
+         end
+      end--of--Copier;
+
+      class Document;;
+
+      ref(Head) TypingPool;
+      ref(Copier) PhotoCopier;
+      integer I, Count;
+
+      TypingPool :- new Head;
+      for I := 1 step 1 until 10 do activate new Typer;
+      PhotoCopier :- new Copier;
+      activate new Writer delay 2.0;
+      activate new Writer delay 4.5;
+      Hold(100);
+      Report;
+      Hold(100);
+      Report
+   end++of++program
+

@@ -1,0 +1,4 @@
+begin
+	OutText("Hello World");
+	OutImage;
+end

@@ -1,0 +1,42 @@
+begin
+               text T1;
+               InImage;
+               inspect SysIn do
+               begin
+                  T1 :- Image;
+                  while T1.More do
+                  begin
+                     character Char1, Char2;
+                     Char1 := T1.GetChar;
+                     if Char1=' ' then
+                     begin
+                        if T1.More then
+                        begin
+                           text T2;
+                           integer Position1, Position2;
+                           Position1 := T1.Pos;
+                           T2 :- T1; ! T2 holds current Pos, Length etc.;
+                           Char2 := T1.GetChar;
+                           while Char2=' ' do
+                              if T1.More then Char2 := T1.GetChar else
+                              begin
+                                 Char2 := '#';
+                                 T1.SetPos(Position1)
+                              end;
+                           Position2 := T1.Pos;
+                           if Position1 ne Position2 then
+                           begin
+                              T2.PutChar(Char2);
+                              while T1.More do T2.PutChar(T1.GetChar);
+                              while T2.More do T2.PutChar(' ');
+                              T1 :- T2
+                           end;
+                           T1.SetPos(Position1)
+                        end
+                     end
+                  end;
+                  T1 :- T1.Strip;
+                  OutText(T1);
+                  OutImage
+               end
+            end

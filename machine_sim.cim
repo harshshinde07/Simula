@@ -1,0 +1,49 @@
+SIMULATION
+   begin
+      integer Count;
+
+      Process class Man(Mill); ref(Machine) Mill;
+      begin
+         while Time<400 do
+         begin
+            OutText("Loading starts");
+            OutFix(Time,2,10);
+            OutImage;   ! Report made;
+            Count := Count + 1;   ! Keep a tally;
+            Hold(5.0);
+            Mill.Components := Mill.Components + 50;   ! Load up;
+            Activate Mill;   ! Restart machine;
+            while Mill.Components>0 do Hold(0.5);   ! Check regularly;
+            Cancel(Mill);   ! Switch off;
+            Hold(10.0);   ! Unloading takes longer;
+            OutText("Unloading finishes");
+            OutFix(Time,2,10);
+            OutImage;   ! Report made;
+         end--of--loop;
+         Passivate
+      end++of++Man;
+      
+      Process class Machine;
+      begin
+         integer Components;
+         while True do
+         begin
+            OutText("Machine starts");
+            OutFix(Time,2,10);
+            OutImage;
+            while Components>0 do
+            begin
+               Hold(2.0);   ! Machining time for one component;
+               Components := Components - 1
+            end..of..inner..loop;
+            Passivate
+         end--of--loop
+      end++of++Machine;
+      
+      ref(Man) Worker;
+      Worker :- new Man(new Machine);
+      Activate Worker;
+      OutText("Count = "); OutInt(Count,4); OutImage;
+      Hold(800);
+      OutText("Simulation ends"); OutImage
+   end**of**simulation

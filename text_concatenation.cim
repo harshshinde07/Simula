@@ -1,0 +1,16 @@
+begin
+                   text T1, T2, T3;
+                   InImage;
+                   inspect SysIn do
+                   begin
+                      T1 :- Copy(Image.Strip);
+                      InImage;
+                      T2 :- Copy(Image.Strip);
+                      T3 :- Blanks(T1.Length + T2.Length);
+                      T3 := T1;
+                      T3.SetPos(T1.Length + 1);
+                      while T2.More do T3.PutChar(T2.GetChar);
+                      OutText(T3);
+                      OutImage
+                   end
+                end

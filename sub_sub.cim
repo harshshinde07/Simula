@@ -1,0 +1,39 @@
+begin
+      class OuterMost(First); text First;
+      begin
+         text OuterText;
+         OuterText :- Copy("Outermost=first on prefix chain");
+         OutText(OuterText);
+         OutImage;
+         OutText(First);
+         OutImage
+      end--of--OuterMost;
+
+      OuterMost class Middle(Second); text Second;
+      begin
+         text MiddleText;
+         MiddleText :- Copy("Middle=second on prefix chain");
+         OutText(MiddleText);
+         OutImage;
+         OutText(First);
+         OutText(Second);
+         OutImage
+      end--of--Middle;
+
+      Middle class InnerMost(Third); text Third;
+      begin
+         text InnerText;
+         InnerText :- Copy("Inner=last on prefix chain");
+         OutText(InnerText);
+         Outimage;
+         OutText(First);
+         OutText(Second);
+         OutText(Third);
+         OutImage
+      end--of--InnerMost;
+
+      new OuterMost("One");
+      new Middle("One","Two");
+      new InnerMost("One","Two","Three")
+
+   end**of**program
